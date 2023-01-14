@@ -108,16 +108,10 @@ namespace MultivalueDynamicArray
 
                 values = str;
             }
-
-            // var vmValues = values[attribute - 1].IndexOf(Vm) == -1
-            //     ? Array.Empty<string>()
-            //     : values[attribute - 1].Split(Vm);
+            
             var vmValues = values[attribute - 1].Split(Vm);
             vmValues = SetVm(vmValues, vm);
             
-            // var subValues =  vmValues[vm - 1].IndexOf(Sv) == -1
-            //     ? Array.Empty<string>()
-            //     : vmValues[vm - 1].Split(Sv);
             var subValues = vmValues[vm - 1].Split(Sv);
             subValues = SetVm(subValues, sVm, value);
 
@@ -266,7 +260,7 @@ namespace MultivalueDynamicArray
         }
 
         /// <summary>
-        /// Implicit operator for D3Matrix assignments.
+        /// Implicit operator for the MultiValueDynamicArray assignments.
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
