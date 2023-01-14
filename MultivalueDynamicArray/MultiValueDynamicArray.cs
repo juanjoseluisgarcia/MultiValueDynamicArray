@@ -171,19 +171,6 @@ namespace MultivalueDynamicArray
 
             return result.ToString();
         }
-        
-        private static char GetPreviousChar(char symbol)
-        {
-            switch (symbol)
-            {
-                case Sv:
-                    return Vm;
-                case Vm:
-                    return Am;
-                default:
-                    return symbol;
-            }
-        }
 
         #endregion
 
