@@ -1,5 +1,4 @@
-﻿using System;
-using MultivalueDynamicArray;
+﻿using MultivalueDynamicArray;
 using NUnit.Framework;
 
 namespace MultivalueDynamicArrayTests
@@ -17,12 +16,34 @@ namespace MultivalueDynamicArrayTests
         }
 
         [Test]
-        public void should_return_d3Matrix_from_a_string()
+        public void should_return_dymanicArray_from_a_string()
         {
             _dynamicArray = _d3Data;
             Assert.AreEqual(_dynamicArray[1, 1, 1], "AAAA");
             Assert.AreEqual(_dynamicArray[1, 1, 2], "BBBB");
             Assert.AreEqual(_dynamicArray[1, 1, 3], "CCCC");
+            Assert.AreEqual(_dynamicArray[1, 1], "AAAAüBBBBüCCCC");
+            Assert.AreEqual(_dynamicArray[1, 2], "BBBB");
+            Assert.AreEqual(_dynamicArray[1, 3], "CCCC");
+            Assert.AreEqual(_dynamicArray[2,1], "BBBB");
+        }
+        
+        [Test]
+        public void should_return_dynamicArray_from_a_string_with_subvalues()
+        {
+            _dynamicArray = "AAAA\\BBBB\\CCCC]BBBB]CCCC^BBBB^^Test]Test2]Test3]tesorito";
+            
+            Assert.AreEqual(_dynamicArray[1, 1, 1], "AAAA");
+            Assert.AreEqual(_dynamicArray[1, 1, 2], "BBBB");
+            Assert.AreEqual(_dynamicArray[1, 1, 3], "CCCC");
+            Assert.AreEqual(_dynamicArray[1, 1], "AAAAüBBBBüCCCC");
+            Assert.AreEqual(_dynamicArray[1, 2], "BBBB");
+            Assert.AreEqual(_dynamicArray[1, 3], "CCCC");
+            Assert.AreEqual(_dynamicArray[2,1], "BBBB");
+            Assert.AreEqual(_dynamicArray[4,1], "Test");
+            Assert.AreEqual(_dynamicArray[4,2], "Test2");
+            Assert.AreEqual(_dynamicArray[4,3], "Test3");
+            Assert.AreEqual(_dynamicArray[4,4], "tesorito");
         }
 
         [Test]
@@ -46,12 +67,13 @@ namespace MultivalueDynamicArrayTests
         public void should_handle_values_correctly()
         {
             _dynamicArray = _d3Data;
-            _dynamicArray[4] = "Test";
-            _dynamicArray[4, 1] = "Test2";
-            _dynamicArray[4, 2] = "Test3";
+            _dynamicArray[4, 1] = "Test";
+            _dynamicArray[4, 2] = "Test2";
+            _dynamicArray[4, 3] = "Test3";
 
-            Assert.AreEqual(_dynamicArray[4, 1], "Test2");
-            Assert.AreEqual(_dynamicArray[4, 2], "Test3");
+            Assert.AreEqual(_dynamicArray[4, 1], "Test");
+            Assert.AreEqual(_dynamicArray[4, 2], "Test2");
+            Assert.AreEqual(_dynamicArray[4, 3], "Test3");
         }
 
         [Test]
@@ -84,8 +106,8 @@ namespace MultivalueDynamicArrayTests
                 matrix[2, 2, i] = "another test" + i;
                 matrix[2, 3, i] = "subtest " + i;
             }
-            
-            
+
+
             Assert.AreEqual(matrix[1, 2, 1], "Test4");
             Assert.AreEqual(matrix[1, 2, 2], "Test5");
             Assert.AreEqual(matrix[2, 1, 1], "Test1");
@@ -108,7 +130,6 @@ namespace MultivalueDynamicArrayTests
         [Test]
         public void should_be_able_to_resize()
         {
-            
             var matrix = new MultiValueDynamicArray
             {
                 [1] = "Test",
@@ -122,7 +143,7 @@ namespace MultivalueDynamicArrayTests
                 matrix[9, 2, i] = "another test" + i;
                 matrix[9, 3, i] = "subtest " + i;
             }
-            
+
             Assert.That(matrix[9, 1, 1], Is.EqualTo("Test1"));
             Assert.That(matrix[9, 1, 2], Is.EqualTo("Test2"));
             Assert.That(matrix[9, 1, 3], Is.EqualTo("Test3"));
@@ -138,6 +159,54 @@ namespace MultivalueDynamicArrayTests
             Assert.That(matrix[9, 3, 3], Is.EqualTo("subtest 3"));
             Assert.That(matrix[9, 3, 4], Is.EqualTo("subtest 4"));
             Assert.That(matrix[9, 3, 5], Is.EqualTo("subtest 5"));
+        }
+
+        [Test]
+        public void should_return_correct_number_of_attributes()
+        {
+            var matrix = new MultiValueDynamicArray
+            {
+                [1] = "Test",
+                [1, 1] = "Test2",
+                [1, 2] = "Test32",
+                [1, 2, 1] = "Test4",
+                [1, 2, 2] = "Test5",
+            };
+            
+            _dynamicArray = _d3Data;
+
+            Assert.That(_dynamicArray.GetAttributeCount(), Is.EqualTo(2));
+            Assert.That(matrix.GetAttributeCount(), Is.EqualTo(1));
+        }
+
+        [Test]
+        public void should_return_correct_number_of_values()
+        {
+            var matrix = new MultiValueDynamicArray
+            {
+                [1, 1] = "Test2",
+                [1, 2] = "Test32",
+                [1, 2, 1] = "Test4",
+                [1, 2, 2] = "Test5",
+            };
+            
+            Assert.That(matrix.GetValuesCount(1), Is.EqualTo(2));
+        }
+        
+        
+        [Test]
+        public void should_return_correct_number_of_subvalues()
+        {
+            var matrix = new MultiValueDynamicArray
+            {
+                [1] = "Test",
+                [1, 1] = "Test2",
+                [1, 2] = "Test32",
+                [1, 2, 1] = "Test4",
+                [1, 2, 2] = "Test5",
+            };
+            
+            Assert.That(matrix.GetSubValuesCount(1, 2), Is.EqualTo(2));
         }
     }
 }
