@@ -1,4 +1,11 @@
-﻿using System.Globalization;
+﻿/***************************************************************************************************
+ * This file is part of the D3 tools for .NET. No part of this code herein
+ * can be reproduced with the express permission of Grab! Data Inc or its
+ * associates  (C) 2011 Grab! Data Inc. All rights reserved. 
+ *
+ **************************************************************************************************/
+
+using System.Globalization;
 using System.Text;
 
 namespace MultivalueDynamicArray
@@ -12,7 +19,6 @@ namespace MultivalueDynamicArray
         /// The unformatted matrix.
         /// </summary>
         private string _arrayString;
-        private readonly Functions _functions;
 
         private const char Am = (char) 254;
         private const char Vm = (char) 253;
@@ -183,7 +189,6 @@ namespace MultivalueDynamicArray
         /// </summary>
         public MultiValueDynamicArray()
         {
-            _functions = new Functions();
             _arrayString = string.Empty;
         }
 
@@ -325,7 +330,7 @@ namespace MultivalueDynamicArray
         /// <returns></returns>
         public int GetAttributeCount()
         {
-            return _functions.Dcount(_arrayString, Am);
+            return _arrayString.Split(Am).Length;
         }
         
         /// <summary>
