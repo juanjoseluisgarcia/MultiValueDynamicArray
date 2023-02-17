@@ -1,5 +1,4 @@
-﻿using System;
-using System.Globalization;
+﻿using System.Globalization;
 using System.Text;
 
 namespace MultivalueDynamicArray
@@ -13,6 +12,7 @@ namespace MultivalueDynamicArray
         /// The unformatted matrix.
         /// </summary>
         private string _arrayString;
+        private readonly Functions _functions;
 
         private const char Am = (char) 254;
         private const char Vm = (char) 253;
@@ -30,16 +30,16 @@ namespace MultivalueDynamicArray
             return values[am - 1];
         }
 
-        private string GetValue(int am, int vm, bool subValue = false)
+        private string GetValue(int am, int vm)
         {
             var values = GetValue(am).Split(Vm);
             
-            return values.Length < vm ? string.Empty : subValue ? values[vm - 1] : values[vm];
+            return values.Length < vm ? string.Empty : values[vm - 1];
         }
 
         private string GetValue(int am, int vm, int sv)
         {
-            var values = GetValue(am, vm, true).Split(Sv);
+            var values = GetValue(am, vm).Split(Sv);
 
             return values.Length < sv ? string.Empty : values[sv - 1];
         }
@@ -80,16 +80,18 @@ namespace MultivalueDynamicArray
                     str[i] = string.Empty;
                 }
 
-                str.CopyTo(values, 0);
+                values = str;
             }
 
-            var vmValues = values[attribute - 1].IndexOf(Vm) == -1
-                ? Array.Empty<string>()
-                : values[attribute - 1].Split(Vm);
+            // var vmValues = values[attribute - 1].IndexOf(Vm) == -1
+            //     ? Array.Empty<string>()
+            //     : values[attribute - 1].Split(Vm);
+            
+            var vmValues = values[attribute - 1].Split(Vm);
 
             vmValues = SetVm(vmValues, vm, value);
 
-            values[attribute - 1] = JoinMultiValue(Vm, values[attribute - 1], vmValues[vm - 1]);
+            values[attribute - 1] = string.Join(Vm.ToString(CultureInfo.CurrentCulture), vmValues);
             _arrayString = string.Join(Am.ToString(CultureInfo.InvariantCulture), values);
         }
 
@@ -181,6 +183,7 @@ namespace MultivalueDynamicArray
         /// </summary>
         public MultiValueDynamicArray()
         {
+            _functions = new Functions();
             _arrayString = string.Empty;
         }
 
@@ -313,6 +316,40 @@ namespace MultivalueDynamicArray
         }
 
         #endregion
+        
+        #region public methods:
+        
+        /// <summary>
+        /// Retrieves the number of attributes in the matrix
+        /// </summary>
+        /// <returns></returns>
+        public int GetAttributeCount()
+        {
+            return _functions.Dcount(_arrayString, Am);
+        }
+        
+        /// <summary>
+        /// Retrieves the number of values in the matrix at a given attribute
+        /// </summary>
+        /// <param name="attribute">attribute to get the values from</param>
+        /// <returns></returns>
+        public int GetValuesCount(int attribute)
+        {
+            return this[attribute].Split(Vm).Length ;
+        }
+        
+        /// <summary>
+        /// Retrieves the number of subvalues in the matrix at a given attribute and value
+        /// </summary>
+        /// <param name="attribute"></param>
+        /// <param name="mvValue"></param>
+        /// <returns></returns>
+        public int GetSubValuesCount(int attribute, int mvValue)
+        {
+            return _arrayString.Split(Am)[attribute - 1].Split(Vm)[mvValue -1].Split(Sv).Length;
+        }
+        
+        #endregion 
 
         #region public properties:
 
